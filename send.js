@@ -21,17 +21,17 @@ async function run(){
 
   let decimals = await Token.methods.decimals().call();
 
-  await Token.methods.approve(TipperArtifacts.networks["4"].address, 5000*Math.pow(10, decimals)).send({from: coinbase, gas: 200000});
+  // await Token.methods.approve(TipperArtifacts.networks["4"].address, 5000*Math.pow(10, decimals)).send({from: coinbase, gas: 200000});
 
   // await Tipper.methods.tipEther("0", postId.toString(), web3.utils.toHex(recipient)).send({from: coinbase, value: tip, gas: 100000});
-  await Tipper.methods.tipEther("1", commentId.toString(), web3.utils.toHex(recipient)).send({from: coinbase, value: tip, gas: 100000});
-  // await Tipper.methods.tipToken(
-  //   "0",
-  //   postId.toString(),
-  //   web3.utils.toHex(recipient),
-  //   TokenArtifacts.networks["4"].address,
-  //   3*Math.pow(10, decimals)
-  // ).send({from: coinbase, gas: 100000});
+  // await Tipper.methods.tipEther("1", commentId.toString(), web3.utils.toHex(recipient)).send({from: coinbase, value: tip, gas: 100000});
+  await Tipper.methods.tipToken(
+    "0",
+    postId.toString(),
+    web3.utils.toHex(recipient),
+    TokenArtifacts.networks["4"].address,
+    3*Math.pow(10, decimals)
+  ).send({from: coinbase, gas: 100000});
 
   process.exit();
 }

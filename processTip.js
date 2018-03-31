@@ -43,11 +43,11 @@ async function sendReply(tip){
 }
 
 async function genReply(tip){
-  if(utils.isEthTip(tip.token)) return `You received a ${web3.utils.fromWei(tip.amount, "finney")} finney (mETH) tip from ${tip.from_address}. You were able to receive this tip directly to your wallet because you've registerd an Ethereum address with r/recdao.`;
+  if(utils.isEthTip(tip.token)) return `You received a ${web3.utils.fromWei(tip.amount, "finney")} finney (mETH) tip from ${tip.from_address} directly to your r/recdao registered wallet.`;
   else {
     const Token = new web3.eth.Contract(erc20, tip.token);
     let decimals = await Token.methods.decimals().call();
     let symbol = await Token.methods.symbol().call();
-    return `You received a ${tip.amount/Math.pow(10, decimals)} ${symbol} tip from ${tip.from_address}. You were able to receive this tip directly to your wallet because you've registerd an Ethereum address with r/recdao.`;
+    return `You received a ${tip.amount/Math.pow(10, decimals)} ${symbol} tip from ${tip.from_address} directly to your r/recdao registered wallet.`;
   }
 }
