@@ -1,27 +1,30 @@
 const Promise = require("bluebird");
-const pgp = require("pg-promise")({promiseLib: Promise});
-const db = pgp("postgres://postgres:postgres@localhost:5432/reddit");
-
+const writeFileAsync = Promise.promisify(require("fs").writeFile);
 const Web3 = require("web3");
+const processTip = require("./processTip");
+let lastBlock;
+try { lastBlock = require("./.lastBlock") } catch(err) {}
 const TipperArtifacts = require("./contracts/build/contracts/Tipper.json");
 // const web3 = new Web3("http://127.0.0.1:9545/");
-const web3 = new Web3("wss://rinkeby.infura.io/ws");
+global.web3 = new Web3("wss://rinkeby.infura.io/ws");
 // const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4447"].address);
 const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4"].address);
 
-// run();
+lastBlock = 2000000
+if(lastBlock) catchUp(lastBlock - 1);
 
-var tipEvent = Tipper.events.Tip();
-
-tipEvent
-  .on("data", log)
+Tipper.events.Tip()
+  .on("data", processTip)
   .on("error", console.error);
 
-function log(data){
-  console.log(data);
+async function catchUp(fromBlock){
+  console.log(`process Tip events from block: ${fromBlock}`);
+  let tips = await Tipper.getPastEvents("Tip", {fromBlock});
+  await Promise.each(tips, processTip);
 }
 
-async function run(){
-  let coinbase = await web3.eth.getCoinbase();
-  console.log(coinbase);
-}
+web3.eth.subscribe("newBlockHeaders")
+  .on("data", async function(block){
+    console.log(block.number);
+    await writeFileAsync(`${__dirname}/.lastBlock.json`, JSON.stringify(block.number));
+  });
