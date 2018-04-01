@@ -2,12 +2,12 @@ const Promise = require("bluebird");
 const pgp = require("pg-promise")({promiseLib: Promise});
 const bases = require("bases");
 const snoowrap = require('snoowrap');
-const db = pgp("postgres://postgres:postgres@localhost:5432/reddit");
+const secret = require("./.secret");
+const db = pgp(`postgres://postgres:${secret.db.password}@localhost:5432/reddit`);
 const {CONTENT_TYPES} = require("./constants");
-const snoowrapConfig = require("./.secret");
 const utils = require("./utils");
 const erc20 = require("./erc20");
-const r = new snoowrap(snoowrapConfig);
+const r = new snoowrap(secret.reddit);
 
 module.exports = async function processTip(tip){
   let {returnValues}= tip;
