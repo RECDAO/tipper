@@ -15,7 +15,7 @@ if(lastBlock) catchUp(lastBlock - 1);
 
 Tipper.events.Tip()
   .on("data", processTip)
-  .on("error", console.error);
+  .on("error", error);
 
 async function catchUp(fromBlock){
   console.log(`process Tip events from block: ${fromBlock}`);
@@ -25,6 +25,20 @@ async function catchUp(fromBlock){
 
 web3.eth.subscribe("newBlockHeaders")
   .on("data", async function(block){
-    console.log(block.number);
+    // console.log(block.number);
     await writeFileAsync(`${__dirname}/.lastBlock.json`, JSON.stringify(block.number));
   });
+
+function error(err){
+  console.warn(err);
+  setTimeout(function () {
+      process.on("exit", function () {
+          require("child_process").spawn(process.argv.shift(), process.argv, {
+              cwd: process.cwd(),
+              detached : true,
+              stdio: "inherit"
+          });
+      });
+      process.exit();
+  }, 5000);
+}
