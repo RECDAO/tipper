@@ -10,7 +10,7 @@ global.web3 = new Web3("wss://rinkeby.infura.io/ws");
 // const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4447"].address);
 const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4"].address);
 
-lastBlock = 2000000
+// lastBlock = 2000000
 if(lastBlock) catchUp(lastBlock - 1);
 
 Tipper.events.Tip()
