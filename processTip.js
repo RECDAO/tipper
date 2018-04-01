@@ -2,9 +2,11 @@ const Promise = require("bluebird");
 const pgp = require("pg-promise")({promiseLib: Promise});
 const bases = require("bases");
 const snoowrap = require('snoowrap');
+const Web3 = require("web3");
 const secret = require("./.secret");
 const db = pgp(`postgres://postgres:${secret.db.password}@localhost:5432/reddit`);
 const {CONTENT_TYPES} = require("./constants");
+const providerUrl = require('./config').providerUrl;
 const utils = require("./utils");
 const erc20 = require("./erc20");
 const r = new snoowrap(secret.reddit);
@@ -19,12 +21,24 @@ module.exports = async function processTip(tip){
 
   let res = await db.any("SELECT * FROM tips WHERE event_id = $1", [eventId]);
   if(!res.length) {
-    let tx = await web3.eth.getTransaction(tip.transactionHash);
+    let tx = await getTx(tip.transactionHash);
     await db.none("INSERT INTO tips(event_id, content_type, reddit_id, token, amount, from_address) VALUES($1, $2, $3, $4, $5, $6)", [eventId, ctype, redditId, token, amount, tx.from]);
     res = await db.any("SELECT * FROM tips WHERE event_id = $1", [eventId]);
   }
   let replyId = res[0].reply_id;
   if(!replyId) return await sendReply(res[0]);
+}
+
+async function getTx(hash, retry){
+  retry = retry || 0;
+  try {
+    return await web3.eth.getTransaction(hash);
+  } catch (err) {
+    if(retry > 5) throw err;
+    console.log("retry", ++retry)
+    global.web3 = new Web3(providerUrl);
+    return await getTx(hash, retry);
+  }
 }
 
 async function sendReply(tip){

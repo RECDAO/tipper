@@ -5,8 +5,9 @@ const processTip = require("./processTip");
 let lastBlock;
 try { lastBlock = require("./.lastBlock") } catch(err) {}
 const TipperArtifacts = require("./contracts/build/contracts/Tipper.json");
+const providerUrl = require('./config').providerUrl;
 // const web3 = new Web3("http://127.0.0.1:9545/");
-global.web3 = new Web3("wss://rinkeby.infura.io/ws");
+global.web3 = new Web3(providerUrl);
 // const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4447"].address);
 const Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4"].address);
 
