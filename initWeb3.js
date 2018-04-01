@@ -5,16 +5,14 @@ const providerUrl = require('./config').providerUrl;
 const Web3 = require("web3");
 const TipperArtifacts = require("./contracts/build/contracts/Tipper.json");
 
-module.exports = {
-  Tipper: null,
-  reset(){
-    // new Web3("http://127.0.0.1:9545/");
-    let web3 = new Web3(providerUrl);
-    this.Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4"].address);
-    subscribeTips(this.Tipper);
-    subscribeBlocks(web3);
-    return global.web3 = web3;
-  }
+exports.contracts = {Tipper: null};
+exports.reset = function(){
+  // new Web3("http://127.0.0.1:9545/");
+  let web3 = new Web3(providerUrl);
+  this.contracts.Tipper = new web3.eth.Contract(TipperArtifacts.abi, TipperArtifacts.networks["4"].address);
+  subscribeTips(this.contracts.Tipper);
+  subscribeBlocks(web3);
+  return global.web3 = web3;
 }
 
 function subscribeTips(Tipper){

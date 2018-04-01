@@ -1,8 +1,8 @@
 const Promise = require("bluebird");
 const initWeb3 = require("./initWeb3");
-const processTip = require("./processTip");
 let web3 = initWeb3.reset();
-const Tipper = initWeb3.Tipper;
+const processTip = require("./processTip");
+const Tipper = initWeb3.contracts.Tipper;
 
 let lastBlock;
 try { lastBlock = require("./.lastBlock") } catch(err) {}
