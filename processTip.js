@@ -10,6 +10,7 @@ const providerUrl = require('./config').providerUrl;
 const utils = require("./utils");
 const erc20 = require("./erc20");
 const r = new snoowrap(secret.reddit);
+const initWeb3 = require("./initWeb3");
 
 module.exports = async function processTip(tip){
   let {returnValues}= tip;
@@ -36,7 +37,7 @@ async function getTx(hash, retry){
   } catch (err) {
     if(retry > 5) throw err;
     console.log("retry", ++retry)
-    global.web3 = new Web3(providerUrl);
+    initWeb3.reset();
     return await getTx(hash, retry);
   }
 }
