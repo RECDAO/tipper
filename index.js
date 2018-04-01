@@ -30,6 +30,7 @@ web3.eth.subscribe("newBlockHeaders")
   });
 
 function error(err){
+  console.log("ERROR HERE!!!!")
   console.warn(err);
   setTimeout(function () {
       process.on("exit", function () {
