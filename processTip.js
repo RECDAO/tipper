@@ -32,7 +32,9 @@ async function sendReply(tip){
   let id;
   try {
     let reply = await genReply(tip);
-    let comment = await r.getSubmission(tip.reddit_id).reply(reply);
+    let comment;
+    if(tip.ctype === "POST") comment = await r.getSubmission(tip.reddit_id).reply(reply);
+    else comment = await r.getComment(tip.reddit_id).reply(reply);
     id = comment.id;
     console.log(`sent reply ${id} to ${tip.content_type}:${tip.reddit_id}`);
   } catch (err) {
