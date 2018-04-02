@@ -44,6 +44,8 @@ async function getTx(hash, retry){
 
 async function sendReply(tip){
   // do send
+  // console.log(tip.reddit_id)
+  // return;
   let id;
   try {
     let reply = await genReply(tip);
